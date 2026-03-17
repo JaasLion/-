@@ -1,0 +1,673 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+.wrap { font-family: var(--font-sans); }
+.header { padding: 1.25rem 1.25rem 1rem; border-bottom: 0.5px solid var(--color-border-tertiary); }
+.header h1 { font-size: 17px; font-weight: 500; color: var(--color-text-primary); }
+.header p { font-size: 12px; color: var(--color-text-secondary); margin-top: 4px; line-height: 1.5; }
+
+.tabs { display: flex; gap: 4px; padding: 0.875rem 1.25rem 0; border-bottom: 0.5px solid var(--color-border-tertiary); overflow-x: auto; }
+.tab { padding: 6px 13px; font-size: 12px; color: var(--color-text-secondary); border-radius: var(--border-radius-md) var(--border-radius-md) 0 0; cursor: pointer; white-space: nowrap; border: 0.5px solid transparent; border-bottom: none; transition: all 0.15s; }
+.tab:hover { background: var(--color-background-secondary); }
+.tab.active { color: var(--color-text-primary); font-weight: 500; background: var(--color-background-primary); border-color: var(--color-border-tertiary); border-bottom: 2px solid var(--color-background-primary); margin-bottom: -1px; }
+
+.panel { display: none; padding: 1.25rem; }
+.panel.active { display: block; }
+
+.sec { font-size: 14px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 3px; }
+.sub { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 1rem; line-height: 1.5; }
+.divider { height: 0.5px; background: var(--color-border-tertiary); margin: 1.25rem 0; }
+
+/* Segment cards */
+.seg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1.25rem; }
+.seg-card { padding: 13px 14px; border-radius: var(--border-radius-lg); border: 0.5px solid var(--color-border-tertiary); }
+.seg-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 500; margin-bottom: 6px; }
+.seg-title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; }
+.seg-desc { font-size: 12px; color: var(--color-text-secondary); line-height: 1.6; }
+.seg-prio { font-size: 11px; margin-top: 6px; font-weight: 500; }
+
+.s1 { background: var(--color-background-danger); border-color: var(--color-border-danger); }
+.s1 .seg-label { color: var(--color-text-danger); }
+.s1 .seg-prio { color: var(--color-text-danger); }
+.s2 { background: var(--color-background-warning); border-color: var(--color-border-warning); }
+.s2 .seg-label { color: var(--color-text-warning); }
+.s2 .seg-prio { color: var(--color-text-warning); }
+.s3 { background: var(--color-background-info); border-color: var(--color-border-info); }
+.s3 .seg-label { color: var(--color-text-info); }
+.s3 .seg-prio { color: var(--color-text-info); }
+.s4 { background: var(--color-background-secondary); }
+.s4 .seg-label { color: var(--color-text-tertiary); }
+.s4 .seg-prio { color: var(--color-text-tertiary); }
+
+/* WA bubbles */
+.wa-block { margin-bottom: 1rem; }
+.wa-tag { font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 500; color: var(--color-text-secondary); margin-bottom: 7px; padding: 3px 0; }
+.wa-bubble { background: var(--color-background-secondary); border-radius: var(--border-radius-lg); padding: 13px 15px; font-size: 13px; color: var(--color-text-primary); line-height: 1.8; border: 0.5px solid var(--color-border-tertiary); }
+.wa-note { font-size: 11px; color: var(--color-text-tertiary); margin-top: 6px; font-style: italic; line-height: 1.5; padding-left: 10px; border-left: 2px solid var(--color-border-secondary); }
+
+/* Stage */
+.stage { margin-bottom: 1.1rem; }
+.stage-header { display: flex; align-items: center; gap: 10px; margin-bottom: 9px; }
+.stage-num { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; flex-shrink: 0; }
+.n-red { background: var(--color-background-danger); color: var(--color-text-danger); }
+.n-amber { background: var(--color-background-warning); color: var(--color-text-warning); }
+.n-green { background: var(--color-background-success); color: var(--color-text-success); }
+.n-blue { background: var(--color-background-info); color: var(--color-text-info); }
+.n-gray { background: var(--color-background-secondary); color: var(--color-text-secondary); }
+.stage-title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); }
+.stage-badge { font-size: 11px; padding: 2px 8px; border-radius: 999px; margin-left: auto; }
+.sb-hot { background: var(--color-background-danger); color: var(--color-text-danger); }
+.sb-warm { background: var(--color-background-warning); color: var(--color-text-warning); }
+.sb-cold { background: var(--color-background-info); color: var(--color-text-info); }
+
+.say-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-left: 3px solid #185FA5; border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0; padding: 11px 13px; margin-bottom: 7px; }
+.say-tag { font-size: 10px; color: #185FA5; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 500; margin-bottom: 5px; }
+.say-body { font-size: 13px; color: var(--color-text-primary); line-height: 1.75; }
+.say-body em { color: var(--color-text-secondary); font-size: 12px; font-style: normal; }
+
+.tip-card { background: var(--color-background-warning); border-radius: var(--border-radius-md); padding: 9px 12px; margin-bottom: 7px; }
+.tip-tag { font-size: 10px; color: var(--color-text-warning); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 500; margin-bottom: 4px; }
+.tip-body { font-size: 12px; color: var(--color-text-secondary); line-height: 1.6; }
+
+.goal-card { background: var(--color-background-success); border-radius: var(--border-radius-md); padding: 9px 12px; margin-bottom: 7px; }
+.goal-tag { font-size: 10px; color: var(--color-text-success); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 500; margin-bottom: 4px; }
+.goal-body { font-size: 12px; color: var(--color-text-secondary); line-height: 1.6; }
+
+/* Objections */
+.obj-card { border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); overflow: hidden; margin-bottom: 9px; }
+.obj-header { background: var(--color-background-secondary); padding: 10px 14px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; user-select: none; }
+.obj-q { font-size: 13px; color: var(--color-text-primary); font-weight: 500; }
+.obj-arr { font-size: 11px; color: var(--color-text-tertiary); transition: transform 0.2s; }
+.obj-arr.open { transform: rotate(180deg); }
+.obj-body { display: none; padding: 12px 14px; border-top: 0.5px solid var(--color-border-tertiary); }
+.obj-body.open { display: block; }
+.obj-ans { font-size: 13px; color: var(--color-text-primary); line-height: 1.75; margin-bottom: 7px; }
+.obj-tip { font-size: 11px; color: var(--color-text-tertiary); font-style: italic; line-height: 1.5; border-left: 2px solid var(--color-border-secondary); padding-left: 8px; }
+
+/* Timeline sequence */
+.seq { position: relative; padding-left: 28px; }
+.seq::before { content: ''; position: absolute; left: 9px; top: 6px; bottom: 6px; width: 1px; background: var(--color-border-secondary); }
+.seq-item { position: relative; margin-bottom: 14px; }
+.seq-dot { position: absolute; left: -22px; top: 3px; width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--color-background-primary); }
+.seq-day { font-size: 10px; color: var(--color-text-tertiary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px; }
+.seq-title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 3px; }
+.seq-desc { font-size: 12px; color: var(--color-text-secondary); line-height: 1.6; }
+
+/* CRM table */
+.crm-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.crm-table th { text-align: left; padding: 8px 10px; font-weight: 500; color: var(--color-text-secondary); border-bottom: 0.5px solid var(--color-border-secondary); font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; }
+.crm-table td { padding: 9px 10px; border-bottom: 0.5px solid var(--color-border-tertiary); color: var(--color-text-primary); vertical-align: top; line-height: 1.5; }
+.crm-table tr:last-child td { border: none; }
+.pill { display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+.p-hot { background: var(--color-background-danger); color: var(--color-text-danger); }
+.p-warm { background: var(--color-background-warning); color: var(--color-text-warning); }
+.p-cold { background: var(--color-background-info); color: var(--color-text-info); }
+.p-dead { background: var(--color-background-secondary); color: var(--color-text-tertiary); }
+</style>
+
+<div class="wrap">
+<div class="header">
+  <h1>Скрипт реактивации мёртвой базы CRM</h1>
+  <p>Сегментация лидов → последовательность касаний → звонок → закрытие. Для тех кто зарегистрировался, но не заплатил.</p>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="showTab('segments')">Сегменты</div>
+  <div class="tab" onclick="showTab('sequence')">Последовательность</div>
+  <div class="tab" onclick="showTab('wa')">WA-шаблоны</div>
+  <div class="tab" onclick="showTab('call')">Звонок</div>
+  <div class="tab" onclick="showTab('obj')">Возражения</div>
+  <div class="tab" onclick="showTab('crm')">CRM-статусы</div>
+</div>
+
+<!-- SEGMENTS -->
+<div class="panel active" id="tab-segments">
+  <div class="sec">Шаг 1 — сегментировать базу перед запуском</div>
+  <div class="sub">Не всех реактивировать одинаково. Разные сегменты — разный тон, разный оффер.</div>
+
+  <div class="seg-grid">
+    <div class="seg-card s1">
+      <div class="seg-label">Сегмент A — горячий</div>
+      <div class="seg-title">Был триал, не оплатил</div>
+      <div class="seg-desc">Зарегистрировался, заходил в систему 2+ раз, триал закончился — не оплатил. Видел продукт, что-то остановило.</div>
+      <div class="seg-prio">Приоритет 1 — звонить первыми</div>
+    </div>
+    <div class="seg-card s2">
+      <div class="seg-label">Сегмент B — тёплый</div>
+      <div class="seg-title">Зарегистрировался, не зашёл</div>
+      <div class="seg-desc">Оставил заявку или зарегистрировался, но в систему почти не заходил. Потерял интерес или закрутился.</div>
+      <div class="seg-prio">Приоритет 2 — WA + звонок</div>
+    </div>
+    <div class="seg-card s3">
+      <div class="seg-label">Сегмент C — старый лид</div>
+      <div class="seg-title">Заявка без регистрации</div>
+      <div class="seg-desc">Оставил контакт (форма на сайте / WA), но так и не зарегистрировался. Срок: 1–12 месяцев назад.</div>
+      <div class="seg-prio">Приоритет 3 — WA-рассылка</div>
+    </div>
+    <div class="seg-card s4">
+      <div class="seg-label">Сегмент D — архив</div>
+      <div class="seg-title">Был клиент, отписался</div>
+      <div class="seg-desc">Платил, потом перестал. Нужен отдельный деликатный подход — сначала выяснить причину ухода.</div>
+      <div class="seg-prio">Приоритет 4 — отдельный скрипт</div>
+    </div>
+  </div>
+
+  <div class="sec">Как выгрузить из CRM</div>
+  <div class="sub">Фильтры для каждого сегмента</div>
+
+  <table class="crm-table">
+    <tr>
+      <th>Сегмент</th>
+      <th>Фильтр в CRM</th>
+      <th>Срок</th>
+      <th>Ожид. конверсия</th>
+    </tr>
+    <tr>
+      <td><span class="pill p-hot">A — горячий</span></td>
+      <td>Статус «триал завершён» + заходов в систему ≥ 2 + не оплачен</td>
+      <td>Любой</td>
+      <td>15–25%</td>
+    </tr>
+    <tr>
+      <td><span class="pill p-warm">B — тёплый</span></td>
+      <td>Статус «зарегистрирован» + последний вход > 7 дней назад + не оплачен</td>
+      <td>До 6 мес.</td>
+      <td>8–15%</td>
+    </tr>
+    <tr>
+      <td><span class="pill p-cold">C — старый</span></td>
+      <td>Статус «лид» + регистрации нет + дата создания > 30 дней</td>
+      <td>1–12 мес.</td>
+      <td>3–8%</td>
+    </tr>
+    <tr>
+      <td><span class="pill p-dead">D — архив</span></td>
+      <td>Статус «бывший клиент» + дата последней оплаты > 3 мес.</td>
+      <td>Любой</td>
+      <td>5–12%</td>
+    </tr>
+  </table>
+</div>
+
+<!-- SEQUENCE -->
+<div class="panel" id="tab-sequence">
+  <div class="sec">Последовательность касаний — по сегментам</div>
+  <div class="sub">Максимум 4 касания на лида. Больше — спам, меньше — недостаточно.</div>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+    <div>
+      <div style="font-size: 12px; font-weight: 500; color: var(--color-text-danger); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 10px;">Сегмент A — был триал</div>
+      <div class="seq">
+        <div class="seq-item">
+          <div class="seq-dot" style="background: #E24B4A;"></div>
+          <div class="seq-day">День 1</div>
+          <div class="seq-title">WhatsApp — персональный</div>
+          <div class="seq-desc">Напомнить про триал, спросить что понравилось. Тон: как от живого человека, не шаблон.</div>
+        </div>
+        <div class="seq-item">
+          <div class="seq-dot" style="background: #E24B4A;"></div>
+          <div class="seq-day">День 3</div>
+          <div class="seq-title">Звонок</div>
+          <div class="seq-desc">Если не ответил на WA — позвонить. Главный вопрос: «Что помешало оплатить?»</div>
+        </div>
+        <div class="seq-item">
+          <div class="seq-dot" style="background: #E24B4A;"></div>
+          <div class="seq-day">День 7</div>
+          <div class="seq-title">WA — оффер со скидкой</div>
+          <div class="seq-desc">Персональная скидка 10–15% с дедлайном 3 дня. Только если не ответил раньше.</div>
+        </div>
+        <div class="seq-item">
+          <div class="seq-dot" style="background: #888780;"></div>
+          <div class="seq-day">День 14</div>
+          <div class="seq-title">Финальное сообщение</div>
+          <div class="seq-desc">«Закрываю ваш лид — если что-то изменится, напишите». После — в архив.</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div style="font-size: 12px; font-weight: 500; color: var(--color-text-warning); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 10px;">Сегмент B — не зашёл в систему</div>
+      <div class="seq">
+        <div class="seq-item">
+          <div class="seq-dot" style="background: #EF9F27;"></div>
+          <div class="seq-day">День 1</div>
+          <div class="seq-title">WhatsApp — «где потерялись»</div>
+          <div class="seq-desc">Напомнить о регистрации, предложить настроить вместе за 15 минут.</div>
+        </div>
+        <div class="seq-item">
+          <div class="seq-dot" style="background: #EF9F27;"></div>
+          <div class="seq-day">День 4</div>
+          <div class="seq-title">WA — полезный контент</div>
+          <div class="seq-desc">Не продавать — дать ценность: «Частая ошибка в ЭСФ которая стоит денег». Внизу мягкий CTA.</div>
+        </div>
+        <div class="seq-item">
+          <div class="seq-dot" style="background: #EF9F27;"></div>
+          <div class="seq-day">День 10</div>
+          <div class="seq-title">Звонок</div>
+          <div class="seq-desc">Уточнить актуальность. Если актуально — провести мини-демо по телефону 10 минут.</div>
+        </div>
+        <div class="seq-item">
+          <div class="seq-dot" style="background: #888780;"></div>
+          <div class="seq-day">День 21</div>
+          <div class="seq-title">Финальный WA + архив</div>
+          <div class="seq-desc">Короткий оффер со скидкой. Если молчит — в архив без удаления.</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div style="font-size: 12px; font-weight: 500; color: var(--color-text-info); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 10px;">Сегмент C — старый лид (1–12 мес.)</div>
+      <div class="seq">
+        <div class="seq-item">
+          <div class="seq-dot" style="background: #185FA5;"></div>
+          <div class="seq-day">День 1</div>
+          <div class="seq-title">WA-рассылка «изменения»</div>
+          <div class="seq-desc">Сообщить о новых функциях или изменениях в законодательстве. Зацепить актуальностью.</div>
+        </div>
+        <div class="seq-item">
+          <div class="seq-dot" style="background: #185FA5;"></div>
+          <div class="seq-day">День 5</div>
+          <div class="seq-title">WA — оффер с дедлайном</div>
+          <div class="seq-desc">Скидка 15% + триал 7 дней (вместо 5). Дедлайн: 3 дня.</div>
+        </div>
+        <div class="seq-item">
+          <div class="seq-dot" style="background: #888780;"></div>
+          <div class="seq-day">День 10</div>
+          <div class="seq-title">Архив</div>
+          <div class="seq-desc">Без финального звонка — только WA. Звонки для этого сегмента нерентабельны.</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div style="font-size: 12px; font-weight: 500; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 10px;">Сегмент D — бывший клиент</div>
+      <div class="seq">
+        <div class="seq-item">
+          <div class="seq-dot" style="background: #5F5E5A;"></div>
+          <div class="seq-day">День 1</div>
+          <div class="seq-title">WA — «почему ушли»</div>
+          <div class="seq-desc">Без продажи — только вопрос. Искренний интерес к причине ухода. Это даёт данные и открывает диалог.</div>
+        </div>
+        <div class="seq-item">
+          <div class="seq-dot" style="background: #5F5E5A;"></div>
+          <div class="seq-day">День 3–7</div>
+          <div class="seq-title">Звонок — разобрать причину</div>
+          <div class="seq-desc">Если ушёл из-за цены — скидка. Из-за функционала — показать что появилось новое. Из-за сложности — онбординг.</div>
+        </div>
+        <div class="seq-item">
+          <div class="seq-dot" style="background: #5F5E5A;"></div>
+          <div class="seq-day">День 14</div>
+          <div class="seq-title">Персональный оффер</div>
+          <div class="seq-desc">На основе причины ухода — точечный оффер. Например: «Вернитесь — первый месяц бесплатно».</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WA TEMPLATES -->
+<div class="panel" id="tab-wa">
+  <div class="sec">WhatsApp-шаблоны по сегментам</div>
+  <div class="sub">Персонализировать под имя и детали из CRM. Никогда не отправлять одно и то же двум людям без правки.</div>
+
+  <div class="wa-block">
+    <div class="wa-tag">Сегмент A — день 1 — был триал, не оплатил</div>
+    <div class="wa-bubble">
+      [Имя], добрый день!<br><br>
+      Меня зовут [Имя], Asistent.kz. Вы пробовали наш сервис [дата или «пару недель назад»] — 5-дневный триал.<br><br>
+      Хочу спросить напрямую: что понравилось, а что остановило от оплаты? Мне важно понять — это поможет нам стать лучше, а вам — получить ответ на вопрос если он был.<br><br>
+      Если просто не было времени разобраться — могу помочь настроить за 15 минут, удобно?
+    </div>
+    <div class="wa-note">Тон: живой, без давления. Просим обратную связь — это снимает защитную реакцию. Человек чувствует что с ним говорят, а не продают.</div>
+  </div>
+
+  <div class="wa-block">
+    <div class="wa-tag">Сегмент A — день 7 — оффер со скидкой (если не ответил)</div>
+    <div class="wa-bubble">
+      [Имя], последний раз пишу насчёт Asistent 🙂<br><br>
+      Хочу предложить: подписка на 1 месяц со скидкой 15% — только для вас, действует до [дата через 3 дня].<br><br>
+      Тариф [Упрощёнка / Общий / НДС] — [сумма со скидкой] тенге вместо [полная цена].<br><br>
+      Если передумали — просто скажите, больше не буду беспокоить. Если актуально — оформим за 5 минут.
+    </div>
+    <div class="wa-note">Скидка с конкретным дедлайном. «Последний раз пишу» — снижает давление и одновременно создаёт срочность.</div>
+  </div>
+
+  <div class="wa-block">
+    <div class="wa-tag">Сегмент A — день 14 — финальное сообщение</div>
+    <div class="wa-bubble">
+      [Имя], закрываю вашу заявку — не хочу беспокоить лишний раз.<br><br>
+      Если в будущем понадобится автоматизировать бухгалтерию — напишите, помогу. Asistent.kz всегда здесь 🤝<br><br>
+      Удачи в бизнесе!
+    </div>
+    <div class="wa-note">Финальное сообщение без продажи. Оставляет хорошее впечатление — часть напишет сама через месяц-два.</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="wa-block">
+    <div class="wa-tag">Сегмент B — день 1 — зарегистрировался, не зашёл</div>
+    <div class="wa-bubble">
+      [Имя], добрый день!<br><br>
+      Вы регистрировались в Asistent.kz — и пропали 😊 Бывает, понимаю.<br><br>
+      Хочу предложить: давайте я помогу настроить за 15 минут онлайн. Загрузим ЭЦП, пропишем реквизиты — и вы сразу увидите как это работает на практике.<br><br>
+      Когда удобно — сегодня или завтра?
+    </div>
+    <div class="wa-note">Лёгкий тон, эмодзи уместны. Конкретное предложение помощи — не «попробуйте», а «давайте вместе».</div>
+  </div>
+
+  <div class="wa-block">
+    <div class="wa-tag">Сегмент B — день 4 — полезный контент без продажи</div>
+    <div class="wa-bubble">
+      [Имя], полезное для вас как предпринимателя 👇<br><br>
+      Частая ошибка в ЭСФ: многие ставят дату выписки документа как дату оборота. По правилам КГД — это дата фактической отгрузки товара или подписания акта. Из-за этой ошибки заказчик может не принять НДС к зачёту.<br><br>
+      В Asistent.kz система подсказывает правильную дату — ошибиться сложно.<br><br>
+      Если интересно посмотреть — ваш аккаунт ещё активен, зайдите попробовать.
+    </div>
+    <div class="wa-note">Ценность без давления. CTA мягкий — «зайдите посмотреть», не «оплатите».</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="wa-block">
+    <div class="wa-tag">Сегмент C — день 1 — старый лид, массовая рассылка</div>
+    <div class="wa-bubble">
+      [Имя], добрый день!<br><br>
+      Вы оставляли заявку в Asistent.kz. С тех пор у нас появилось много нового: выписка СНТ, автоматическая форма 300 из ваших ЭСФ, мобильная версия без NCAlayer.<br><br>
+      Плюс — с 2025 года НДС-порог снизился до 20 000 МРП. Если вы к нему приближаетесь — форма 300 становится обязательной уже скоро.<br><br>
+      Специально для вас: 7 дней бесплатного доступа (вместо стандартных 5) + скидка 15% на первый месяц. Предложение действует до [дата].<br><br>
+      Попробовать → [ссылка]
+    </div>
+    <div class="wa-note">Для массовой рассылки — актуальный крючок (изменения в законе) + расширенный оффер. Персонализировать хотя бы имя.</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="wa-block">
+    <div class="wa-tag">Сегмент D — день 1 — бывший клиент</div>
+    <div class="wa-bubble">
+      [Имя], добрый день!<br><br>
+      Меня зовут [Имя], Asistent.kz. Вы были нашим клиентом — спасибо за это 🤝<br><br>
+      Хочу спросить честно: почему перестали пользоваться? Нам важно понять — цена, функционал, что-то другое?<br><br>
+      Никаких продаж — просто хочу разобраться. Если можете ответить парой слов — буду очень признателен.
+    </div>
+    <div class="wa-note">Самое важное — НЕ продавать в первом сообщении. Только вопрос. Когда человек ответит «почему ушёл» — вы уже знаете чем его вернуть.</div>
+  </div>
+</div>
+
+<!-- CALL SCRIPT -->
+<div class="panel" id="tab-call">
+  <div class="sec">Скрипт звонка реактивации</div>
+  <div class="sub">Главное отличие от холодного звонка — у этого человека уже был контакт с продуктом. Не объяснять что такое Asistent, а выяснить что пошло не так.</div>
+
+  <div class="stage">
+    <div class="stage-header">
+      <div class="stage-num n-blue">1</div>
+      <div class="stage-title">Открытие — напомнить контекст</div>
+      <div class="stage-badge sb-hot">Сегм. A и B</div>
+    </div>
+    <div class="say-card">
+      <div class="say-tag">Говорить</div>
+      <div class="say-body">
+        «Здравствуйте, [Имя]! Меня зовут [Имя], компания Asistent.kz. Вы у нас регистрировались [дата / "пару месяцев назад"] — я звоню чтобы уточнить пару вопросов, если не возражаете. Буквально 5 минут.»
+      </div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-tag">Важно</div>
+      <div class="tip-body">Не говорить «вы не оплатили» — звучит как упрёк. Говорить «уточнить пару вопросов» — нейтрально и вызывает любопытство.</div>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="stage-header">
+      <div class="stage-num n-red">2</div>
+      <div class="stage-title">Главный вопрос — причина незакрытия</div>
+    </div>
+    <div class="say-card">
+      <div class="say-tag">Говорить</div>
+      <div class="say-body">
+        «[Имя], скажите прямо — вы пробовали наш сервис, но не продолжили. Что помешало?»<br><br>
+        <em>[Пауза. Молчать и слушать. Не перебивать.]</em>
+      </div>
+    </div>
+    <div class="goal-card">
+      <div class="goal-tag">Цель</div>
+      <div class="goal-body">Услышать настоящую причину. Обычно это одна из четырёх: цена, не разобрался, нет времени, нашёл другое решение. Каждая — отдельный ответ (см. возражения).</div>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="stage-header">
+      <div class="stage-num n-amber">3</div>
+      <div class="stage-title">Реакция на причину — не спорить, присоединиться</div>
+    </div>
+    <div class="say-card">
+      <div class="say-tag">Говорить (универсальный переход)</div>
+      <div class="say-body">
+        «Понимаю, [Имя], спасибо что сказали честно. [Вставить ответ на конкретную причину из вкладки Возражения.]<br><br>
+        Скажите — если бы этот момент решился, вы бы рассмотрели Asistent снова?»
+      </div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-tag">Техника</div>
+      <div class="tip-body">Вопрос «если бы решилось...» — это условное согласие. Человек отвечает «да» или «нет». Если «да» — вы знаете что предложить. Если «нет» — причина другая, копать глубже.</div>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="stage-header">
+      <div class="stage-num n-green">4</div>
+      <div class="stage-title">Оффер — конкретный и ограниченный</div>
+    </div>
+    <div class="say-card">
+      <div class="say-tag">Говорить</div>
+      <div class="say-body">
+        «Хочу сделать вам конкретное предложение — специально для тех кто уже знаком с системой.<br><br>
+        [Вариант 1 — цена была проблемой:] «Первый месяц со скидкой 20% — [сумма]. Дальше стандартная цена.»<br><br>
+        [Вариант 2 — не разобрался:] «Давайте я помогу настроить прямо сейчас — 15 минут онлайн и вы увидите всё сами. Бесплатно, без обязательств.»<br><br>
+        [Вариант 3 — нет времени:] «Понимаю. Тогда давайте так: я сам настрою ваш аккаунт — вам нужно будет только заходить и пользоваться. 20 минут вашего времени.»
+      </div>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="stage-header">
+      <div class="stage-num n-gray">5</div>
+      <div class="stage-title">Закрытие — конкретное следующее действие</div>
+    </div>
+    <div class="say-card">
+      <div class="say-tag">Говорить</div>
+      <div class="say-body">
+        «Итого: [повторить оффер одним предложением]. Скинуть ссылку прямо в WhatsApp?»<br><br>
+        <em>[Если «да» — скинуть ссылку не выходя из звонка, пока человек на линии.]</em><br><br>
+        <em>[Если «надо подумать» — назначить конкретную дату: «Хорошо, когда мне перезвонить — завтра в это же время?»]</em>
+      </div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-tag">Правило</div>
+      <div class="tip-body">Никогда не заканчивать звонок без конкретного следующего шага с датой и временем. «Я подумаю» без даты = отказ.</div>
+    </div>
+  </div>
+</div>
+
+<!-- OBJECTIONS -->
+<div class="panel" id="tab-obj">
+  <div class="sec">Возражения реактивации</div>
+  <div class="sub">Специфика реактивации: человек уже знает продукт, значит причина отказа конкретная. Нажмите чтобы раскрыть.</div>
+
+  <div class="obj-card">
+    <div class="obj-header" onclick="toggleObj(this)">
+      <div class="obj-q">«Я нашёл другую программу / уже пользуюсь чем-то другим»</div>
+      <div class="obj-arr">▼</div>
+    </div>
+    <div class="obj-body">
+      <div class="obj-ans">«Понял, и что используете если не секрет? [Ждать ответа.]<br><br>
+      [Если 1С:] «1С — мощный инструмент, но он для бухгалтеров. Вы сами им пользуетесь или через специалиста? Asistent специально для владельца бизнеса — без бухгалтера можно всё сделать с телефона.»<br><br>
+      [Если портал ЭСФ:] «Портал — это только для ЭСФ. А форма 300, зарплата, учёт доходов, напоминания о дедлайнах — это всё отдельно? Asistent собирает всё в одном месте.»<br><br>
+      [Если другой сервис:] «Интересно. Что в нём нравится больше всего?» [Найти что у вас лучше и сделать на этом акцент.]»</div>
+      <div class="obj-tip">Не атаковать конкурента — задать вопрос про него. Пусть сам расскажет слабые стороны.</div>
+    </div>
+  </div>
+
+  <div class="obj-card">
+    <div class="obj-header" onclick="toggleObj(this)">
+      <div class="obj-q">«Было сложно разобраться, не понял как пользоваться»</div>
+      <div class="obj-arr">▼</div>
+    </div>
+    <div class="obj-body">
+      <div class="obj-ans">«Честно — это наша проблема, не ваша. Когда человек регистрируется и разбирается один — часто теряется. Именно поэтому мы теперь помогаем с настройкой лично.<br><br>
+      Вот что предлагаю: 15 минут онлайн — я открываю ваш аккаунт, настраиваем вместе. После этого вы сами выпишете первую ЭСФ и поймёте что тут всё просто. Если не понравится — ничего не платите.<br><br>
+      Когда удобно — сегодня после 18:00 или завтра утром?»</div>
+      <div class="obj-tip">Взять вину на себя — это обезоруживает. Человек не чувствует себя «тупым», расслабляется и соглашается попробовать.</div>
+    </div>
+  </div>
+
+  <div class="obj-card">
+    <div class="obj-header" onclick="toggleObj(this)">
+      <div class="obj-q">«Дорого для меня сейчас»</div>
+      <div class="obj-arr">▼</div>
+    </div>
+    <div class="obj-body">
+      <div class="obj-ans">«Понимаю. Скажите — а бухгалтерские вопросы у вас сейчас есть? ЭСФ, отчёты, налоги — как сейчас решаете?»<br><br>
+      [Ждать ответа — выяснить скрытые затраты.]<br><br>
+      «Получается, вы сейчас платите [бухгалтеру / тратите своё время / рискуете штрафом]. Давайте посмотрим: тариф Упрощёнка — 16 666 тенге в месяц. Это 550 тенге в день. Меньше чашки кофе в Алматы.<br><br>
+      Специально для вас — первый месяц за [цена со скидкой 20%]. Если в первый месяц не сэкономите больше чем заплатили — верну деньги.»</div>
+      <div class="obj-tip">Дробить цену до дня — 550 тенге воспринимается иначе чем 16 666. Предложение вернуть деньги снимает риск.</div>
+    </div>
+  </div>
+
+  <div class="obj-card">
+    <div class="obj-header" onclick="toggleObj(this)">
+      <div class="obj-q">«Не было времени — забыл, закрутился»</div>
+      <div class="obj-arr">▼</div>
+    </div>
+    <div class="obj-body">
+      <div class="obj-ans">«Понимаю — у предпринимателя всегда нет времени. Именно поэтому мы придумали такой формат: давайте я сделаю максимум за вас.<br><br>
+      Скиньте мне БИН вашей компании — я сам предварительно настрою аккаунт. Вам останется зайти и ввести пароль от ЭЦП. Это 5 минут с вашей стороны.<br><br>
+      Попробуем?»</div>
+      <div class="obj-tip">Снять с него любое усилие — максимально низкий барьер входа. «Скиньте БИН» — простое действие которое начинает процесс.</div>
+    </div>
+  </div>
+
+  <div class="obj-card">
+    <div class="obj-header" onclick="toggleObj(this)">
+      <div class="obj-q">«Я закрыл ИП / сейчас не работаю»</div>
+      <div class="obj-arr">▼</div>
+    </div>
+    <div class="obj-body">
+      <div class="obj-ans">«Понял, спасибо что сказали. Всё будет хорошо — бизнес дело цикличное 🤝<br><br>
+      Когда откроетесь снова — пишите, подключим быстро. Занесу вас в отдельный список — свяжусь как будете готовы.<br><br>
+      Удачи!»</div>
+      <div class="obj-tip">Закрыть с уважением и пометить в CRM «потенциал в будущем». Через 3–6 месяцев — написать снова.</div>
+    </div>
+  </div>
+
+  <div class="obj-card">
+    <div class="obj-header" onclick="toggleObj(this)">
+      <div class="obj-q">«Вы уже писали, не надо больше»</div>
+      <div class="obj-arr">▼</div>
+    </div>
+    <div class="obj-body">
+      <div class="obj-ans">«Понял, прошу прощения за беспокойство — больше не буду. Занесу в список «не писать».<br><br>
+      Только один вопрос напоследок — что именно вас остановило? Мне важно понять чтобы стать лучше. Буквально одно слово: цена, сложность, не нужно?»</div>
+      <div class="obj-tip">Даже при отказе — получить причину. Это данные для продукта. И 20% раздражённых людей всё равно отвечают на финальный вопрос.</div>
+    </div>
+  </div>
+</div>
+
+<!-- CRM STATUSES -->
+<div class="panel" id="tab-crm">
+  <div class="sec">Статусы в CRM для реактивации</div>
+  <div class="sub">Единая система пометок — чтобы менеджер понимал что делать дальше с каждым лидом.</div>
+
+  <table class="crm-table">
+    <tr>
+      <th>Статус</th>
+      <th>Что означает</th>
+      <th>Следующий шаг</th>
+      <th>Срок</th>
+    </tr>
+    <tr>
+      <td><span class="pill p-hot">Реактивация — А</span></td>
+      <td>Был триал, не оплатил. Взят в работу.</td>
+      <td>Позвонить сегодня</td>
+      <td>День 1</td>
+    </tr>
+    <tr>
+      <td><span class="pill" style="background:#FBEAF0;color:#993556;">На паузе</span></td>
+      <td>Сказал «позвоните через X недель» или «сейчас не актуально»</td>
+      <td>Поставить задачу в CRM на конкретную дату</td>
+      <td>По договорённости</td>
+    </tr>
+    <tr>
+      <td><span class="pill p-warm">Жду ответа</span></td>
+      <td>WA отправлен, ответа нет. Ждать 2 дня.</td>
+      <td>Позвонить если нет ответа</td>
+      <td>+2 дня</td>
+    </tr>
+    <tr>
+      <td><span class="pill p-cold">Оффер отправлен</span></td>
+      <td>Скидка/оффер отправлены. Ждать дедлайна.</td>
+      <td>Напомнить за день до дедлайна</td>
+      <td>День дедлайна −1</td>
+    </tr>
+    <tr>
+      <td><span class="pill" style="background:var(--color-background-success);color:var(--color-text-success);">Триал запущен</span></td>
+      <td>Согласился попробовать снова. Онбординг проведён.</td>
+      <td>Написать на 4-й день триала</td>
+      <td>+4 дня</td>
+    </tr>
+    <tr>
+      <td><span class="pill" style="background:#E1F5EE;color:#0F6E56;">Оплатил</span></td>
+      <td>Конверсия реактивации состоялась.</td>
+      <td>Записать канал реактивации. Welcome-сообщение.</td>
+      <td>Сразу</td>
+    </tr>
+    <tr>
+      <td><span class="pill p-dead">Отказ — цена</span></td>
+      <td>Явный отказ по причине цены.</td>
+      <td>Написать при появлении акции или скидки</td>
+      <td>+1–3 мес.</td>
+    </tr>
+    <tr>
+      <td><span class="pill p-dead">Отказ — конкурент</span></td>
+      <td>Ушёл к другому сервису.</td>
+      <td>Написать через 6 мес. «как дела с тем решением»</td>
+      <td>+6 мес.</td>
+    </tr>
+    <tr>
+      <td><span class="pill p-dead">Не писать</span></td>
+      <td>Попросил не беспокоить.</td>
+      <td>Не касаться. Только если сам напишет.</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td><span class="pill p-dead">Архив</span></td>
+      <td>4 касания, нет реакции.</td>
+      <td>Добавить в общую рассылку раз в квартал</td>
+      <td>Раз в 3 мес.</td>
+    </tr>
+  </table>
+
+  <div style="margin-top: 1.25rem; padding: 14px; background: var(--color-background-info); border-radius: var(--border-radius-lg);">
+    <div style="font-size: 13px; font-weight: 500; color: var(--color-text-info); margin-bottom: 6px;">Главное правило реактивации</div>
+    <div style="font-size: 12px; color: var(--color-text-secondary); line-height: 1.75;">
+      Мёртвая база — это не мусор. Это люди, которые однажды уже подняли руку и сказали «мне интересно». Они не купили тогда по какой-то причине. Задача менеджера — найти эту причину и убрать её. Не продавать сильнее, а слушать внимательнее.
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+function showTab(id) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('tab-' + id).classList.add('active');
+}
+function toggleObj(header) {
+  const body = header.nextElementSibling;
+  const arr = header.querySelector('.obj-arr');
+  body.classList.toggle('open');
+  arr.classList.toggle('open');
+}
+</script>

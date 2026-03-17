@@ -1,0 +1,739 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+.wrap { font-family: var(--font-sans); }
+.header { padding: 1.25rem 1.25rem 1rem; border-bottom: 0.5px solid var(--color-border-tertiary); }
+.header h1 { font-size: 17px; font-weight: 500; color: var(--color-text-primary); }
+.header p { font-size: 12px; color: var(--color-text-secondary); margin-top: 4px; line-height: 1.5; }
+
+.tabs { display: flex; gap: 4px; padding: 0.875rem 1.25rem 0; border-bottom: 0.5px solid var(--color-border-tertiary); overflow-x: auto; }
+.tab { padding: 6px 13px; font-size: 12px; color: var(--color-text-secondary); border-radius: var(--border-radius-md) var(--border-radius-md) 0 0; cursor: pointer; white-space: nowrap; border: 0.5px solid transparent; border-bottom: none; transition: all 0.15s; }
+.tab:hover { background: var(--color-background-secondary); }
+.tab.active { color: var(--color-text-primary); font-weight: 500; background: var(--color-background-primary); border-color: var(--color-border-tertiary); border-bottom: 2px solid var(--color-background-primary); margin-bottom: -1px; }
+
+.panel { display: none; padding: 1.25rem; }
+.panel.active { display: block; }
+
+.sec { font-size: 14px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 3px; }
+.sub { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 1rem; line-height: 1.5; }
+.divider { height: 0.5px; background: var(--color-border-tertiary); margin: 1.25rem 0; }
+
+/* Timer urgency banner */
+.urgency-bar { background: var(--color-background-danger); border-radius: var(--border-radius-lg); padding: 12px 16px; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 12px; }
+.urgency-icon { width: 32px; height: 32px; border-radius: 50%; background: var(--color-text-danger); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.urgency-icon span { color: white; font-size: 14px; }
+.urgency-text strong { font-size: 13px; font-weight: 500; color: var(--color-text-danger); display: block; }
+.urgency-text p { font-size: 12px; color: var(--color-text-secondary); margin-top: 2px; line-height: 1.5; }
+
+/* Speed table */
+.speed-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 1.25rem; }
+.speed-table th { text-align: left; padding: 8px 10px; font-weight: 500; color: var(--color-text-secondary); border-bottom: 0.5px solid var(--color-border-secondary); font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; }
+.speed-table td { padding: 9px 10px; border-bottom: 0.5px solid var(--color-border-tertiary); color: var(--color-text-primary); vertical-align: middle; line-height: 1.5; }
+.speed-table tr:last-child td { border: none; }
+.pill { display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+.p-green { background: var(--color-background-success); color: var(--color-text-success); }
+.p-amber { background: var(--color-background-warning); color: var(--color-text-warning); }
+.p-red { background: var(--color-background-danger); color: var(--color-text-danger); }
+.p-gray { background: var(--color-background-secondary); color: var(--color-text-tertiary); }
+
+/* Source cards */
+.src-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1.25rem; }
+.src-card { padding: 13px 14px; border-radius: var(--border-radius-lg); border: 0.5px solid var(--color-border-tertiary); background: var(--color-background-secondary); }
+.src-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 500; color: var(--color-text-tertiary); margin-bottom: 5px; }
+.src-title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; }
+.src-desc { font-size: 12px; color: var(--color-text-secondary); line-height: 1.6; }
+
+/* WA bubbles */
+.wa-block { margin-bottom: 1rem; }
+.wa-tag { font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 500; color: var(--color-text-secondary); margin-bottom: 7px; }
+.wa-bubble { background: var(--color-background-secondary); border-radius: var(--border-radius-lg); padding: 13px 15px; font-size: 13px; color: var(--color-text-primary); line-height: 1.85; border: 0.5px solid var(--color-border-tertiary); }
+.wa-note { font-size: 11px; color: var(--color-text-tertiary); margin-top: 6px; line-height: 1.5; padding-left: 10px; border-left: 2px solid var(--color-border-secondary); font-style: italic; }
+
+/* Stage */
+.stage { margin-bottom: 1.1rem; }
+.stage-header { display: flex; align-items: center; gap: 10px; margin-bottom: 9px; }
+.stage-num { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; flex-shrink: 0; }
+.n-red { background: var(--color-background-danger); color: var(--color-text-danger); }
+.n-amber { background: var(--color-background-warning); color: var(--color-text-warning); }
+.n-green { background: var(--color-background-success); color: var(--color-text-success); }
+.n-blue { background: var(--color-background-info); color: var(--color-text-info); }
+.n-purple { background: #EEEDFE; color: #534AB7; }
+.stage-title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); }
+.stage-time { font-size: 11px; color: var(--color-text-tertiary); margin-left: auto; white-space: nowrap; }
+
+.say-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-left: 3px solid #185FA5; border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0; padding: 11px 13px; margin-bottom: 7px; }
+.say-tag { font-size: 10px; color: #185FA5; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 500; margin-bottom: 5px; }
+.say-body { font-size: 13px; color: var(--color-text-primary); line-height: 1.8; }
+.say-body em { color: var(--color-text-secondary); font-size: 12px; font-style: normal; }
+
+.tip-card { background: var(--color-background-warning); border-radius: var(--border-radius-md); padding: 9px 12px; margin-bottom: 7px; }
+.tip-tag { font-size: 10px; color: var(--color-text-warning); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 500; margin-bottom: 4px; }
+.tip-body { font-size: 12px; color: var(--color-text-secondary); line-height: 1.6; }
+
+.goal-card { background: var(--color-background-success); border-radius: var(--border-radius-md); padding: 9px 12px; margin-bottom: 7px; }
+.goal-tag { font-size: 10px; color: var(--color-text-success); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 500; margin-bottom: 4px; }
+.goal-body { font-size: 12px; color: var(--color-text-secondary); line-height: 1.6; }
+
+/* Q list */
+.q-list { list-style: none; }
+.q-item { padding: 10px 0; border-bottom: 0.5px solid var(--color-border-tertiary); display: flex; gap: 10px; }
+.q-item:last-child { border: none; }
+.q-num { font-size: 11px; color: var(--color-text-tertiary); width: 20px; flex-shrink: 0; padding-top: 2px; }
+.q-main { font-size: 13px; color: var(--color-text-primary); line-height: 1.6; margin-bottom: 3px; }
+.q-why { font-size: 11px; color: var(--color-text-tertiary); line-height: 1.5; }
+
+/* Objections */
+.obj-card { border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); overflow: hidden; margin-bottom: 9px; }
+.obj-header { background: var(--color-background-secondary); padding: 10px 14px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; user-select: none; }
+.obj-q { font-size: 13px; color: var(--color-text-primary); font-weight: 500; }
+.obj-arr { font-size: 11px; color: var(--color-text-tertiary); transition: transform 0.2s; }
+.obj-arr.open { transform: rotate(180deg); }
+.obj-body { display: none; padding: 12px 14px; border-top: 0.5px solid var(--color-border-tertiary); }
+.obj-body.open { display: block; }
+.obj-ans { font-size: 13px; color: var(--color-text-primary); line-height: 1.8; margin-bottom: 7px; }
+.obj-tip { font-size: 11px; color: var(--color-text-tertiary); font-style: italic; line-height: 1.5; border-left: 2px solid var(--color-border-secondary); padding-left: 8px; }
+
+/* Flow diagram */
+.flow { display: flex; flex-direction: column; gap: 0; }
+.flow-row { display: flex; align-items: stretch; gap: 0; }
+.flow-box { flex: 1; padding: 12px 14px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-tertiary); }
+.flow-arrow-v { display: flex; justify-content: center; align-items: center; height: 28px; color: var(--color-text-tertiary); font-size: 16px; }
+.flow-arrow-h { display: flex; align-items: center; padding: 0 6px; color: var(--color-text-tertiary); font-size: 14px; }
+.flow-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 500; margin-bottom: 4px; }
+.flow-title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 3px; }
+.flow-desc { font-size: 11px; color: var(--color-text-secondary); line-height: 1.5; }
+.fb { background: var(--color-background-danger); border-color: var(--color-border-danger); }
+.fb .flow-label { color: var(--color-text-danger); }
+.fw { background: var(--color-background-warning); border-color: var(--color-border-warning); }
+.fw .flow-label { color: var(--color-text-warning); }
+.fg { background: var(--color-background-success); border-color: var(--color-border-success); }
+.fg .flow-label { color: var(--color-text-success); }
+.fi { background: var(--color-background-info); border-color: var(--color-border-info); }
+.fi .flow-label { color: var(--color-text-info); }
+.fn { background: var(--color-background-secondary); }
+.fn .flow-label { color: var(--color-text-tertiary); }
+
+/* Checklist */
+.check-list { list-style: none; }
+.check-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 0.5px solid var(--color-border-tertiary); cursor: pointer; }
+.check-item:last-child { border: none; }
+.check-box { width: 18px; height: 18px; border-radius: 4px; border: 1.5px solid var(--color-border-secondary); flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+.check-box.on { background: var(--color-background-success); border-color: var(--color-border-success); }
+.check-box.on::after { content: '✓'; font-size: 11px; color: var(--color-text-success); }
+.check-text { font-size: 13px; color: var(--color-text-primary); line-height: 1.6; }
+.check-text.done { color: var(--color-text-tertiary); text-decoration: line-through; }
+</style>
+
+<div class="wrap">
+<div class="header">
+  <h1>Скрипт для лидов с таргетированной рекламы</h1>
+  <p>Instagram / Telegram / Google лид-форма → WhatsApp → звонок → триал → оплата. Главное отличие: лид горячий, но быстро остывает.</p>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="showTab('logic')">Логика работы</div>
+  <div class="tab" onclick="showTab('wa5min')">WA за 5 минут</div>
+  <div class="tab" onclick="showTab('call')">Звонок</div>
+  <div class="tab" onclick="showTab('qualify')">Квалификация</div>
+  <div class="tab" onclick="showTab('obj')">Возражения</div>
+  <div class="tab" onclick="showTab('checklist')">Чеклист</div>
+</div>
+
+<!-- LOGIC -->
+<div class="panel active" id="tab-logic">
+  <div class="urgency-bar">
+    <div class="urgency-icon"><span>⏱</span></div>
+    <div class="urgency-text">
+      <strong>Правило №1 — ответить в течение 5 минут</strong>
+      <p>Лид с таргета остывает быстрее всех. Через 30 минут конверсия падает в 5 раз. Через час — в 10 раз. Первый ответ должен прийти автоматически, человек — в течение 5 минут.</p>
+    </div>
+  </div>
+
+  <div class="sec">Чем лид с таргета отличается от холодного</div>
+  <div class="sub">Это меняет всю логику разговора</div>
+
+  <div class="src-grid">
+    <div class="src-card">
+      <div class="src-label">Лид с таргета</div>
+      <div class="src-title">Сам поднял руку</div>
+      <div class="src-desc">Увидел рекламу, нажал, оставил контакт. Значит боль уже есть — нужно её быстро найти и усилить, не объяснять зачем это нужно.</div>
+    </div>
+    <div class="src-card">
+      <div class="src-label">Холодный лид</div>
+      <div class="src-title">Мы нашли его сами</div>
+      <div class="src-desc">Не знает о нас, нужно сначала объяснить кто мы и зачем. Дольше, сложнее, ниже конверсия.</div>
+    </div>
+    <div class="src-card">
+      <div class="src-label">Контекст рекламы</div>
+      <div class="src-title">Помним что он видел</div>
+      <div class="src-desc">Если крео был «ЭСФ за 2 минуты» — начинать с ЭСФ. Если «форма 300 автоматически» — с 300-й. Первое сообщение должно продолжать мысль рекламы.</div>
+    </div>
+    <div class="src-card">
+      <div class="src-label">Психология момента</div>
+      <div class="src-title">Он ждёт реакции</div>
+      <div class="src-desc">Только что нажал «оставить заявку». Смотрит на телефон. Если ответить через 5 минут — он ещё «в теме». Через час — уже забыл зачем нажимал.</div>
+    </div>
+  </div>
+
+  <div class="sec">Воронка: от клика до оплаты</div>
+  <div class="sub">Каждый этап — конкретное действие с таймингом</div>
+
+  <div class="flow">
+    <div class="flow-row">
+      <div class="flow-box fb">
+        <div class="flow-label">0 минут</div>
+        <div class="flow-title">Лид поступил в CRM</div>
+        <div class="flow-desc">Из лид-формы Instagram / Telegram / Google. Уведомление менеджеру — мгновенно.</div>
+      </div>
+    </div>
+    <div class="flow-arrow-v">↓</div>
+    <div class="flow-row">
+      <div class="flow-box fw">
+        <div class="flow-label">0–2 минуты</div>
+        <div class="flow-title">Автоответ в WhatsApp</div>
+        <div class="flow-desc">Мгновенное сообщение: «Получили вашу заявку, свяжемся в течение 5 минут». Это удерживает лид горячим.</div>
+      </div>
+    </div>
+    <div class="flow-arrow-v">↓</div>
+    <div class="flow-row">
+      <div class="flow-box fg">
+        <div class="flow-label">До 5 минут</div>
+        <div class="flow-title">Живое сообщение от менеджера</div>
+        <div class="flow-desc">Персональный WA с крючком из рекламного крео. Квалификация 1–2 вопроса.</div>
+      </div>
+    </div>
+    <div class="flow-arrow-v">↓</div>
+    <div class="flow-row" style="gap: 8px;">
+      <div class="flow-box fi" style="flex: 1;">
+        <div class="flow-label">5–15 минут</div>
+        <div class="flow-title">Ответил — звонок или демо</div>
+        <div class="flow-desc">Квалификация + демо по телефону или в Zoom. Закрытие на триал.</div>
+      </div>
+      <div class="flow-arrow-h">или</div>
+      <div class="flow-box fn" style="flex: 1;">
+        <div class="flow-label">Не ответил</div>
+        <div class="flow-title">Звонок через 15 минут</div>
+        <div class="flow-desc">Позвонить самому. Если не берёт — голосовое. Если снова тишина — WA на следующий день.</div>
+      </div>
+    </div>
+    <div class="flow-arrow-v">↓</div>
+    <div class="flow-row">
+      <div class="flow-box fg">
+        <div class="flow-label">В день контакта</div>
+        <div class="flow-title">Триал + онбординг 15 мин.</div>
+        <div class="flow-desc">Зарегистрировался сразу на звонке. Настроили вместе. Выписал первую ЭСФ сам.</div>
+      </div>
+    </div>
+    <div class="flow-arrow-v">↓</div>
+    <div class="flow-row">
+      <div class="flow-box fi">
+        <div class="flow-label">День 4 триала</div>
+        <div class="flow-title">Follow-up → оплата</div>
+        <div class="flow-desc">WA-напоминание + предложение оформить подписку. Закрытие на оплату.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="sec">Скорость ответа vs конверсия</div>
+  <div class="sub">Данные по рынку — почему 5 минут это не перфекционизм, а необходимость</div>
+
+  <table class="speed-table">
+    <tr>
+      <th>Время ответа</th>
+      <th>Конверсия в разговор</th>
+      <th>Статус лида</th>
+    </tr>
+    <tr>
+      <td>До 5 минут</td>
+      <td style="font-weight:500; color: var(--color-text-success);">~40–50%</td>
+      <td><span class="pill p-green">Горячий — максимум</span></td>
+    </tr>
+    <tr>
+      <td>5–30 минут</td>
+      <td>~20–30%</td>
+      <td><span class="pill p-amber">Тёплый — норма</span></td>
+    </tr>
+    <tr>
+      <td>30 минут — 2 часа</td>
+      <td>~10–15%</td>
+      <td><span class="pill p-amber">Остывает</span></td>
+    </tr>
+    <tr>
+      <td>2–24 часа</td>
+      <td>~5–8%</td>
+      <td><span class="pill p-red">Холодный</span></td>
+    </tr>
+    <tr>
+      <td>Больше суток</td>
+      <td>~2–3%</td>
+      <td><span class="pill p-gray">Почти мёртвый</span></td>
+    </tr>
+  </table>
+</div>
+
+<!-- WA FIRST 5 MIN -->
+<div class="panel" id="tab-wa5min">
+  <div class="sec">Первое сообщение — до 5 минут после заявки</div>
+  <div class="sub">Шаблоны под каждый рекламный крео. Первое сообщение должно продолжать мысль объявления — иначе лид «не узнаёт» себя.</div>
+
+  <div class="wa-block">
+    <div class="wa-tag">Крео «ЭСФ за 2 минуты без NCAlayer» → Instagram/Telegram</div>
+    <div class="wa-bubble">
+      Здравствуйте, [Имя]! 👋<br><br>
+      Это Asistent.kz — вы оставили заявку насчёт ЭСФ.<br><br>
+      Скажите, вы сейчас как выписываете ЭСФ — через портал esf.gov.kz или другую программу?
+    </div>
+    <div class="wa-note">Одно конкретное открытое слово в конце. Не рассказывать о себе — задать вопрос. Человек ответил на вопрос = разговор начался.</div>
+  </div>
+
+  <div class="wa-block">
+    <div class="wa-tag">Крео «Форма 300 автоматически» → тендерщикам</div>
+    <div class="wa-bubble">
+      Здравствуйте, [Имя]!<br><br>
+      Asistent.kz — вы заинтересовались автоматической формой 300.<br><br>
+      Вы уже платите НДС или только планируете встать на учёт?
+    </div>
+    <div class="wa-note">Быстрая квалификация: «уже платит» = горячий, нужно демо срочно. «Планирует» = тёплый, работаем на опережение.</div>
+  </div>
+
+  <div class="wa-block">
+    <div class="wa-tag">Крео «Бухгалтерия для ИП от 550 тенге в день» → широкая аудитория</div>
+    <div class="wa-bubble">
+      Здравствуйте, [Имя]! 🤝<br><br>
+      Это Asistent.kz — вы оставили заявку на онлайн-бухгалтерию.<br><br>
+      У вас ИП или ТОО? И на каком режиме — упрощёнка или общеустановленный?
+    </div>
+    <div class="wa-note">Два квалификационных вопроса в одном — ИП/ТОО и режим. Сразу понятен тариф. Не перегружать — только это.</div>
+  </div>
+
+  <div class="wa-block">
+    <div class="wa-tag">Крео «Сдай 910-ю форму за 10 минут» → ИП упрощёнка</div>
+    <div class="wa-bubble">
+      Добрый день, [Имя]!<br><br>
+      Asistent.kz — видел что вас интересует сдача формы 910.<br><br>
+      Вы уже пробовали сдавать через СОНО самостоятельно или всегда через бухгалтера?
+    </div>
+    <div class="wa-note">Вопрос сразу выявляет боль: «через СОНО» = технически грамотный, нужно показать скорость. «Через бухгалтера» = стоимость — главный крючок.</div>
+  </div>
+
+  <div class="wa-block">
+    <div class="wa-tag">Если лид не отвечает 15+ минут → звонок не берёт → голосовое</div>
+    <div class="wa-bubble">
+      [Голосовое сообщение — 20–30 секунд]<br><br>
+      «Здравствуйте, [Имя]! Это [Имя] из Asistent.kz — вы оставляли заявку. Напишите в WhatsApp когда будет удобно, или перезвоните на этот номер. Спасибо!»
+    </div>
+    <div class="wa-note">Голосовые слушают в 3 раза чаще чем читают текст. Держать до 30 секунд — не дольше. Без презентации — только кто, откуда, и просьба ответить.</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="sec">Follow-up если не ответил в первый день</div>
+  <div class="sub">Максимум 3 касания. После — в базу реактивации.</div>
+
+  <div class="wa-block">
+    <div class="wa-tag">День 2 — напоминание</div>
+    <div class="wa-bubble">
+      [Имя], добрый день! Писал вчера насчёт Asistent.kz — вы оставляли заявку.<br><br>
+      Вопрос в силе — хотите покажу как работает за 10 минут онлайн?
+    </div>
+  </div>
+
+  <div class="wa-block">
+    <div class="wa-tag">День 4 — полезность без продажи</div>
+    <div class="wa-bubble">
+      [Имя], просто полезное — не продаю 🙂<br><br>
+      С апреля 2025 налоговые изменения: порог НДС снизился до 20 000 МРП (~73 млн тенге). Если оборот приближается — нужно готовиться к форме 300 заранее.<br><br>
+      Если будет актуально — напишите, помогу разобраться.
+    </div>
+    <div class="wa-note">Ценность без давления. Если человек молчал — это «другой разговор». Не продолжение первого, а новый повод.</div>
+  </div>
+
+  <div class="wa-block">
+    <div class="wa-tag">День 7 — финальный оффер</div>
+    <div class="wa-bubble">
+      [Имя], последний раз пишу — не хочу надоедать 🙂<br><br>
+      Специально для тех кто оставлял заявку: 7 дней бесплатного доступа вместо стандартных 5 + скидка 10% на первый месяц. Действует до [дата].<br><br>
+      Если интересно — отвечайте, оформим за 5 минут. Если нет — всё хорошо, удачи в бизнесе!
+    </div>
+  </div>
+</div>
+
+<!-- CALL -->
+<div class="panel" id="tab-call">
+  <div class="sec">Скрипт звонка — лид с таргета</div>
+  <div class="sub">Средняя длина звонка: 10–15 минут. Цель: квалифицировать → показать ценность → закрыть на триал прямо на звонке.</div>
+
+  <div class="stage">
+    <div class="stage-header">
+      <div class="stage-num n-red">1</div>
+      <div class="stage-title">Открытие — связать с рекламой</div>
+      <div class="stage-time">0–1 мин.</div>
+    </div>
+    <div class="say-card">
+      <div class="say-tag">Говорить</div>
+      <div class="say-body">
+        «Здравствуйте, [Имя]! Меня зовут [Имя], компания Asistent.kz. Вы у нас оставляли заявку — видели нашу рекламу про [ЭСФ / форму 300 / бухгалтерию для ИП].<br><br>
+        Вам сейчас удобно говорить пару минут?»
+      </div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-tag">Важно</div>
+      <div class="tip-body">Называть конкретно что он видел в рекламе — это создаёт «узнавание». Человек понимает: вы не просто колл-центр, а продолжение того что он сам искал.</div>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="stage-header">
+      <div class="stage-num n-amber">2</div>
+      <div class="stage-title">Квалификация — 3 быстрых вопроса</div>
+      <div class="stage-time">1–3 мин.</div>
+    </div>
+    <div class="say-card">
+      <div class="say-tag">Говорить</div>
+      <div class="say-body">
+        «Позвольте пару вопросов — хочу понять подходит ли вам именно наш сервис, чтобы не тратить ваше время зря.<br><br>
+        У вас ИП или ТОО?<br><br>
+        <em>[Ответ]</em><br><br>
+        Какой налоговый режим — упрощёнка, общеустановленный, или с НДС?<br><br>
+        <em>[Ответ]</em><br><br>
+        А сейчас как ведёте бухгалтерию — сами, через бухгалтера, или какая-то программа?»
+      </div>
+    </div>
+    <div class="goal-card">
+      <div class="goal-tag">Что даёт квалификация</div>
+      <div class="goal-body">ИП упрощёнка → тариф 16 666 ₸, показывать форму 910. ТОО / общий → 26 666 ₸, показывать 200-ю и учёт расходов. НДС → 41 666 ₸, главный крючок — форма 300 автоматически.</div>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="stage-header">
+      <div class="stage-num n-blue">3</div>
+      <div class="stage-title">Выявление боли — один точечный вопрос</div>
+      <div class="stage-time">2–4 мин.</div>
+    </div>
+    <div class="say-card">
+      <div class="say-tag">Говорить</div>
+      <div class="say-body">
+        «А что конкретно вас заинтересовало в нашей рекламе — что хотите автоматизировать в первую очередь?»<br><br>
+        <em>[Молчать. Ждать ответ. Не подсказывать варианты.]</em><br><br>
+        <em>Частые ответы:</em><br>
+        <em>— «ЭСФ неудобно через портал» → показываем ЭСФ за 2 мин.</em><br>
+        <em>— «Отчёты хочу сдавать сам» → показываем форму 910/300 в 3 клика</em><br>
+        <em>— «Бухгалтер дорого стоит» → считаем разницу в цене</em><br>
+        <em>— «Хочу всё в одном месте» → показываем дашборд</em>
+      </div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-tag">Техника</div>
+      <div class="tip-body">Человек сам называет свою боль → вы показываете решение точно под неё. Это в 3 раза сильнее чем рассказывать про все функции подряд.</div>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="stage-header">
+      <div class="stage-num n-green">4</div>
+      <div class="stage-title">Мини-демо — 5 минут, только одна функция</div>
+      <div class="stage-time">4–9 мин.</div>
+    </div>
+    <div class="say-card">
+      <div class="say-tag">Говорить</div>
+      <div class="say-body">
+        «Хорошо, давайте я покажу именно это — займёт 5 минут. Вам удобнее Zoom, или скинуть короткое видео прямо в WhatsApp?»<br><br>
+        <em>[Если Zoom / созвон с экраном:]</em><br>
+        «Смотрите — открываю Asistent с телефона, обычный браузер. [Показываем боль клиента: ЭСФ / отчёт / форму 300]. Вот и всё — [X] минут вместо [Y]. Как вам?»<br><br>
+        <em>[Если не может созвониться сейчас:]</em><br>
+        «Ок, скину видео в WhatsApp прямо сейчас — 2 минуты, посмотрите когда будет время. Договорились?»
+      </div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-tag">Правило демо</div>
+      <div class="tip-body">Показывать только одну функцию — ту о которой говорил клиент. Не «экскурсию по системе». Перегруженное демо убивает решение так же как его отсутствие.</div>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="stage-header">
+      <div class="stage-num n-purple">5</div>
+      <div class="stage-title">Закрытие на триал — прямо на звонке</div>
+      <div class="stage-time">9–13 мин.</div>
+    </div>
+    <div class="say-card">
+      <div class="say-tag">Говорить</div>
+      <div class="say-body">
+        «[Имя], как вам — это то что вам нужно?»<br><br>
+        <em>[Ждать ответ]</em><br><br>
+        «Отлично. Предлагаю прямо сейчас зарегистрироваться — займёт 2 минуты. Первые 5 дней бесплатно, карту вводить не нужно.<br><br>
+        Я параллельно буду онлайн — помогу настроить ЭЦП и реквизиты. После этого вы уже сами выпишете первую ЭСФ или форму. Попробуем прямо сейчас?»<br><br>
+        <em>[Скинуть ссылку на регистрацию в WA прямо на звонке, не класть трубку]</em>
+      </div>
+    </div>
+    <div class="goal-card">
+      <div class="goal-tag">Почему закрывать прямо на звонке</div>
+      <div class="goal-body">Если положить трубку без регистрации — конверсия падает в 3–4 раза. «Зарегистрируюсь позже» = 70% не зарегистрируется никогда. Помочь сделать первый шаг прямо сейчас — главная задача звонка.</div>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="stage-header">
+      <div class="stage-num n-blue">6</div>
+      <div class="stage-title">Онбординг — 15 минут после регистрации</div>
+      <div class="stage-time">13–28 мин.</div>
+    </div>
+    <div class="say-card">
+      <div class="say-tag">Говорить</div>
+      <div class="say-body">
+        «Отлично, вижу что вы зарегистрировались — теперь настроим за 15 минут чтобы всё заработало сразу.<br><br>
+        Шаг 1: Реквизиты — укажите БИН, налоговый режим, юр. форму. Это займёт 2 минуты.<br><br>
+        Шаг 2: ЭЦП — загрузите файл ключа, введите пароль один раз. После этого все функции доступны.<br><br>
+        Шаг 3: Подпись и печать — сфотографируйте или загрузите файл. Теперь на всех документах будут автоматически.<br><br>
+        А теперь — давайте выпишем первую ЭСФ прямо сейчас, вместе. Готовы?»
+      </div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-tag">Почему онбординг сразу</div>
+      <div class="tip-body">Клиент который сам выписал первую ЭСФ в системе — конвертируется в платящего в 4–5 раз чаще, чем тот кто просто зарегистрировался. Первое действие = первая привычка.</div>
+    </div>
+  </div>
+</div>
+
+<!-- QUALIFY -->
+<div class="panel" id="tab-qualify">
+  <div class="sec">Матрица квалификации лида</div>
+  <div class="sub">По ответам на 3 вопроса — сразу понятен тариф, демо и главный крючок.</div>
+
+  <ul class="q-list">
+    <div class="q-item">
+      <div class="q-num">Q1</div>
+      <div>
+        <div class="q-main">«ИП или ТОО?»</div>
+        <div class="q-why">ИП упрощёнка → тариф 16 666 ₸ / форма 910 / сам ведёт. ТОО → тариф 26 666+ ₸ / форма 200 / скорее всего есть бухгалтер.</div>
+      </div>
+    </div>
+    <div class="q-item">
+      <div class="q-num">Q2</div>
+      <div>
+        <div class="q-main">«Какой налоговый режим?»</div>
+        <div class="q-why">Упрощёнка → 16 666 ₸, главная боль — форма 910 раз в полгода. Общеустановленный → 26 666 ₸, форма 200. НДС → 41 666 ₸, форма 300 — главный крючок.</div>
+      </div>
+    </div>
+    <div class="q-item">
+      <div class="q-num">Q3</div>
+      <div>
+        <div class="q-main">«Как сейчас ведёте бухгалтерию?»</div>
+        <div class="q-why">Сам через Excel/портал → Asistent экономит время. Бухгалтер → Asistent дешевле, считать разницу. 1С → Asistent проще для владельца, без специалиста. Никак → риск штрафов, срочность.</div>
+      </div>
+    </div>
+    <div class="q-item">
+      <div class="q-num">Q4</div>
+      <div>
+        <div class="q-main">«Сколько ЭСФ или документов в месяц примерно?»</div>
+        <div class="q-why">До 10 — небольшой объём, акцент на стоимость. 20–50 — средний, акцент на время. 50+ — большой объём, это наша ЦА, говорить активнее про автоматизацию.</div>
+      </div>
+    </div>
+    <div class="q-item">
+      <div class="q-num">Q5</div>
+      <div>
+        <div class="q-main">«Есть сотрудники, нужно считать зарплату?»</div>
+        <div class="q-why">Если есть — добавить в демо модуль зарплаты и ОПВ. Это отдельная боль которую стоит показать, особенно если у него приходящий бухгалтер.</div>
+      </div>
+    </div>
+  </ul>
+
+  <div class="divider"></div>
+
+  <div class="sec">Что показывать на демо — по режиму</div>
+  <div class="sub">Никогда не показывать всё подряд — только то что болит у конкретного человека</div>
+
+  <div class="src-grid">
+    <div class="src-card" style="border-color: var(--color-border-warning); background: var(--color-background-warning);">
+      <div class="src-label" style="color: var(--color-text-warning);">ИП Упрощёнка</div>
+      <div class="src-title">Показать</div>
+      <div class="src-desc" style="color: var(--color-text-primary);">1. Форма 910 за 3 клика<br>2. Оплата налогов картой<br>3. ЭСФ с телефона без NCAlayer</div>
+    </div>
+    <div class="src-card" style="border-color: var(--color-border-info); background: var(--color-background-info);">
+      <div class="src-label" style="color: var(--color-text-info);">ИП / ТОО Общий режим</div>
+      <div class="src-title">Показать</div>
+      <div class="src-desc" style="color: var(--color-text-primary);">1. Форма 200 автоматически<br>2. Расчёт зарплаты и ОПВ<br>3. Учёт доходов/расходов</div>
+    </div>
+    <div class="src-card" style="border-color: var(--color-border-danger); background: var(--color-background-danger);">
+      <div class="src-label" style="color: var(--color-text-danger);">ИП / ТОО с НДС</div>
+      <div class="src-title">Показать</div>
+      <div class="src-desc" style="color: var(--color-text-primary);">1. Форма 300 из ЭСФ автоматически<br>2. ЭСФ за 2 мин. без NCAlayer<br>3. Проверка НДС контрагентов</div>
+    </div>
+    <div class="src-card" style="border-color: var(--color-border-success); background: var(--color-background-success);">
+      <div class="src-label" style="color: var(--color-text-success);">Тендерщик (любой режим)</div>
+      <div class="src-title">Показать</div>
+      <div class="src-desc" style="color: var(--color-text-primary);">1. ЭСФ + ЭАВР за 2 мин.<br>2. Форма 300 / 910 автоматически<br>3. Документы с телефона на объекте</div>
+    </div>
+  </div>
+</div>
+
+<!-- OBJECTIONS -->
+<div class="panel" id="tab-obj">
+  <div class="sec">Возражения лида с таргета</div>
+  <div class="sub">Специфика: человек сам кликнул на рекламу, значит интерес был. Возражения здесь — это барьеры, а не отказы. Нажмите чтобы раскрыть.</div>
+
+  <div class="obj-card">
+    <div class="obj-header" onclick="toggleObj(this)">
+      <div class="obj-q">«Я просто посмотрел рекламу, мне не надо»</div>
+      <div class="obj-arr">▼</div>
+    </div>
+    <div class="obj-body">
+      <div class="obj-ans">«Понял, спасибо что честно. Скажите — а с бухгалтерией, ЭСФ, отчётами как сейчас справляетесь? Просто хочу понять — может, есть что-то полезное для вас именно сейчас, не буду предлагать лишнее.»</div>
+      <div class="obj-tip">Не отпускать сразу — уточняющий вопрос открывает реальную картину. Часто «не надо» = «не понял как это решает мою проблему».</div>
+    </div>
+  </div>
+
+  <div class="obj-card">
+    <div class="obj-header" onclick="toggleObj(this)">
+      <div class="obj-q">«У меня есть бухгалтер»</div>
+      <div class="obj-arr">▼</div>
+    </div>
+    <div class="obj-body">
+      <div class="obj-ans">«Хорошо. А бухгалтер у вас в штате или приходящий? [Ждать ответ.]<br><br>
+      [Приходящий:] «Понятно. А когда вам нужна ЭСФ прямо сейчас — в 9 вечера или в выходной — вы ждёте бухгалтера или делаете сами? Asistent — это не замена бухгалтеру, это инструмент для вас на такие случаи. И стоит в 3 раза дешевле даже приходящего специалиста.»<br><br>
+      [Штатный:] «Отлично, тогда Asistent будет удобен именно вашему бухгалтеру — всё в одном месте, не нужно переключаться между порталами. Покажу за 5 минут — пусть оценит.»</div>
+      <div class="obj-tip">Никогда не атаковать бухгалтера. Позиционировать Asistent как инструмент «для вас и для него», а не замену.</div>
+    </div>
+  </div>
+
+  <div class="obj-card">
+    <div class="obj-header" onclick="toggleObj(this)">
+      <div class="obj-q">«Сколько стоит? Это дорого»</div>
+      <div class="obj-arr">▼</div>
+    </div>
+    <div class="obj-body">
+      <div class="obj-ans">«Зависит от вашего режима. У нас три тарифа: ИП упрощёнка — 16 666 тенге в месяц, это 550 тенге в день. Общий режим — 26 666 тенге. С НДС — 41 666 тенге.<br><br>
+      Для сравнения: приходящий бухгалтер за квартальный отчёт берёт 15 000–30 000 тенге — это за один документ раз в квартал. У нас за ту же сумму — весь год, все документы, неограниченно.<br><br>
+      Плюс — первые 5 дней бесплатно. Попробуете — сами поймёте стоит ли.»</div>
+      <div class="obj-tip">Дробить цену до дня. Сравнивать с реальной альтернативой клиента — бухгалтером. Не сравнивать с конкурентами.</div>
+    </div>
+  </div>
+
+  <div class="obj-card">
+    <div class="obj-header" onclick="toggleObj(this)">
+      <div class="obj-q">«Хочу подумать / не готов сейчас»</div>
+      <div class="obj-arr">▼</div>
+    </div>
+    <div class="obj-body">
+      <div class="obj-ans">«Конечно, понимаю. Скажите — что именно вас останавливает? Чтобы я мог дать вам именно ту информацию которая нужна для решения, а не лишнее.»<br><br>
+      [Ждать ответ.]<br><br>
+      «Хорошо. Вот что предлагаю: пока думаете — зарегистрируйтесь на 5 дней бесплатно, это ни к чему не обязывает. Попробуете на своих реальных документах — и решение само придёт. Это займёт 2 минуты, скинуть ссылку?»</div>
+      <div class="obj-tip">«Надо подумать» — почти всегда скрытое возражение. Задать уточняющий вопрос обязательно. Финальное предложение — триал без риска.</div>
+    </div>
+  </div>
+
+  <div class="obj-card">
+    <div class="obj-header" onclick="toggleObj(this)">
+      <div class="obj-q">«Я пользуюсь порталом ЭСФ — там бесплатно»</div>
+      <div class="obj-arr">▼</div>
+    </div>
+    <div class="obj-body">
+      <div class="obj-ans">«Да, портал ЭСФ бесплатный — и только для ЭСФ. А как вы сейчас считаете налоги, сдаёте форму 910 или 300, ведёте учёт доходов и расходов, считаете зарплату сотрудников?<br><br>
+      [Ждать ответ — обычно «вручную» или «через бухгалтера».]<br><br>
+      «Вот именно. Портал ЭСФ — это один инструмент из десяти. Asistent — всё в одном: ЭСФ, отчёты, налоги, зарплата, учёт. И ЭСФ здесь быстрее чем на портале — без NCAlayer, с телефона.»</div>
+      <div class="obj-tip">Не критиковать портал — расширить картину. Показать что Asistent = портал ЭСФ + всё остальное.</div>
+    </div>
+  </div>
+
+  <div class="obj-card">
+    <div class="obj-header" onclick="toggleObj(this)">
+      <div class="obj-q">«Безопасно ли загружать ЭЦП?»</div>
+      <div class="obj-arr">▼</div>
+    </div>
+    <div class="obj-body">
+      <div class="obj-ans">«Правильный вопрос — хорошо что спрашиваете. Есть два вида ЭЦП: обычная и налоговая. Налоговая ЭЦП работает только на государственных сервисах — она не даёт доступа к банковскому счёту или регистрационным данным.<br><br>
+      Мы используем именно налоговое ЭЦП. И после каждой операции — отправки ЭСФ или отчёта — ключ автоматически удаляется с нашего сервера.<br><br>
+      Мы работаем с 2017 года, более 32 000 клиентов. Если бы были проблемы с безопасностью — мы бы не просуществовали столько лет.»</div>
+      <div class="obj-tip">Объяснить разницу между видами ЭЦП — это убирает главный страх. Цифры доверия (7 лет, 32 000 клиентов) усиливают.</div>
+    </div>
+  </div>
+</div>
+
+<!-- CHECKLIST -->
+<div class="panel" id="tab-checklist">
+  <div class="sec">Чеклист менеджера — для каждого лида с таргета</div>
+  <div class="sub">Отмечайте по ходу работы с лидом.</div>
+
+  <ul class="check-list">
+    <li class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div class="check-text">Лид пришёл в CRM — поставить задачу «написать прямо сейчас»</div>
+    </li>
+    <li class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div class="check-text">Отправить первое WA-сообщение в течение 5 минут — использовать шаблон под конкретный крео</div>
+    </li>
+    <li class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div class="check-text">Записать источник лида в CRM: Instagram / Telegram / Google + какой крео</div>
+    </li>
+    <li class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div class="check-text">Квалифицировать: ИП или ТОО, режим налогообложения, текущее решение</div>
+    </li>
+    <li class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div class="check-text">Определить что показывать на демо — 1 функция под его боль, не больше</div>
+    </li>
+    <li class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div class="check-text">Провести демо — экран или короткое видео в WA</div>
+    </li>
+    <li class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div class="check-text">Закрыть на регистрацию прямо на звонке — скинуть ссылку не вешая трубку</div>
+    </li>
+    <li class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div class="check-text">Провести онбординг: реквизиты + ЭЦП + первая ЭСФ вместе (15 минут)</div>
+    </li>
+    <li class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div class="check-text">Поставить задачу в CRM: написать на 4-й день триала с предложением оплатить</div>
+    </li>
+    <li class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div class="check-text">Если не ответил на WA — позвонить через 15 минут. Не берёт — голосовое 30 сек.</div>
+    </li>
+    <li class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div class="check-text">Если молчит 1 день — повторный WA. День 4 — полезность. День 7 — финальный оффер.</div>
+    </li>
+    <li class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div class="check-text">После 7 дней без ответа — перенести в базу реактивации, не удалять</div>
+    </li>
+  </ul>
+
+  <div style="margin-top: 1.25rem; padding: 14px; background: var(--color-background-info); border-radius: var(--border-radius-lg);">
+    <div style="font-size: 13px; font-weight: 500; color: var(--color-text-info); margin-bottom: 6px;">Главное отличие этого скрипта</div>
+    <div style="font-size: 12px; color: var(--color-text-secondary); line-height: 1.75;">
+      Лид с таргета — самый тёплый тип лида. Он уже сам поднял руку. Задача менеджера не в том чтобы «убедить» — а в том чтобы не потерять. Скорость + релевантность первого сообщения + онбординг прямо на звонке = конверсия 30–40% против 5–10% при стандартном подходе.
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+function showTab(id) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('tab-' + id).classList.add('active');
+}
+function toggleObj(header) {
+  const body = header.nextElementSibling;
+  const arr = header.querySelector('.obj-arr');
+  body.classList.toggle('open');
+  arr.classList.toggle('open');
+}
+function toggleCheck(item) {
+  const box = item.querySelector('.check-box');
+  const text = item.querySelector('.check-text');
+  box.classList.toggle('on');
+  text.classList.toggle('done');
+}
+</script>
